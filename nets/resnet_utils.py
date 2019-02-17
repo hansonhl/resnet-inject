@@ -109,17 +109,19 @@ def conv2d_same(inputs, num_outputs, kernel_size, stride, rate=1, scope=None):
       the convolution output.
   """
   if stride == 1:
-    return slim.conv2d(inputs, num_outputs, kernel_size, stride=1, rate=rate,
-                       padding='SAME', scope=scope)
+    inputs = slim.conv2d(inputs, num_outputs, kernel_size, stride=1, rate=rate,
+                      padding='SAME', scope=scope)
+    return inputs
   else:
     kernel_size_effective = kernel_size + (kernel_size - 1) * (rate - 1)
     pad_total = kernel_size_effective - 1
     pad_beg = pad_total // 2
     pad_end = pad_total - pad_beg
     inputs = tf.pad(inputs,
-                    [[0, 0], [pad_beg, pad_end], [pad_beg, pad_end], [0, 0]])
-    return slim.conv2d(inputs, num_outputs, kernel_size, stride=stride,
+                    [[0, 0], [pad_beg, pad_end], [pad_beg, pad_end], [0, 0]], )
+    inputs = slim.conv2d(inputs, num_outputs, kernel_size, stride=stride,
                        rate=rate, padding='VALID', scope=scope)
+    return inputs
 
 
 @slim.add_arg_scope
