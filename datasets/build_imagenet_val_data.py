@@ -202,10 +202,14 @@ def _convert_to_example(filename, image_buffer, label, synset, human,
   #   # pylint: disable=expression-not-assigned
   #   [l.append(point) for l, point in zip([xmin, ymin, xmax, ymax], b)]
   #   # pylint: enable=expression-not-assigned
-
-  colorspace = 'RGB'
+  encoding = 'utf-8'
+  colorspace = bytes('RGB', encoding)
   channels = 3
-  image_format = 'JPEG'
+  image_format = bytes('JPEG', encoding)
+  synset = bytes(synset, encoding)
+  human = bytes(human, encoding)
+  filename_bytes = bytes(os.path.basename(filename), encoding)
+  # image_buffer = bytes(image_buffer, encoding) 
 
   example = tf.train.Example(features=tf.train.Features(feature={
       'image/height': _int64_feature(height),
@@ -221,7 +225,7 @@ def _convert_to_example(filename, image_buffer, label, synset, human,
       # 'image/object/bbox/ymax': _float_feature(ymax),
       # 'image/object/bbox/label': _int64_feature([label] * len(xmin)),
       'image/format': _bytes_feature(image_format),
-      'image/filename': _bytes_feature(os.path.basename(filename)),
+      'image/filename': _bytes_feature(filename_bytes),
       'image/encoded': _bytes_feature(image_buffer)}))
   return example
 
@@ -314,7 +318,7 @@ def _process_image(filename, coder):
     width: integer, image width in pixels.
   """
   # Read the image file.
-  image_data = tf.gfile.FastGFile(filename, 'r').read()
+  image_data = tf.gfile.FastGFile(filename, 'rb').read()
 
   # Clean the dirty data.
   if _is_png(filename):
@@ -523,7 +527,7 @@ def _find_image_files(data_dir, labels_file):
   # Shuffle the ordering of all image files in order to guarantee
   # random ordering of the images with respect to label in the
   # saved TFRecord files. Make the randomization repeatable.
-  shuffled_index = range(len(filenames))
+  shuffled_index = list(range(len(filenames)))
   random.seed(12345)
   random.shuffle(shuffled_index)
 

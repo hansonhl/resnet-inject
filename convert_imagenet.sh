@@ -52,24 +52,28 @@
 # Note the locations of the train and validation data.
 DATA_DIR="/local/hanson/imagenet"
 
+if [ ! -d "$DATA_DIR" ]; then
+    mkdir ${DATA_DIR}
+fi
+
 TRAIN_DIRECTORY="/local/train/"
 VALIDATION_DIRECTORY="/local/val_images/"
-LABELS_FILE="$./datasets/imagenet_lsvrc_2015_synsets.txt"
+LABELS_FILE="./datasets/imagenet_lsvrc_2015_synsets.txt"
 
 echo "Organizing the validation data into sub-directories."
 PREPROCESS_VAL_SCRIPT="./datasets/preprocess_imagenet_validation_data.py"
 VAL_LABELS_FILE="./datasets/imagenet_2012_validation_synset_labels.txt"
 
-"${PREPROCESS_VAL_SCRIPT}" "${VALIDATION_DIRECTORY}" "${VAL_LABELS_FILE}"
+#"${PREPROCESS_VAL_SCRIPT}" "${VALIDATION_DIRECTORY}" "${VAL_LABELS_FILE}"
 
 echo "Finished preprocessing the ImageNet data."
 
 # Build the TFRecords version of the ImageNet data.
 BUILD_SCRIPT="./datasets/build_imagenet_val_data.py"
 OUTPUT_DIRECTORY="${DATA_DIR}"
-IMAGENET_METADATA_FILE="$./datasets/imagenet_metadata.txt"
+IMAGENET_METADATA_FILE="./datasets/imagenet_metadata.txt"
 
-"${BUILD_SCRIPT}" \
+python3 "${BUILD_SCRIPT}" \
   --validation_directory="${VALIDATION_DIRECTORY}" \
   --output_directory="${OUTPUT_DIRECTORY}" \
   --imagenet_metadata_file="${IMAGENET_METADATA_FILE}" \
