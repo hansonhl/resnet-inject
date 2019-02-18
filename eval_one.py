@@ -89,6 +89,5 @@ def main(_):
             variables_to_restore=variables_to_restore)
 
 
-
 if __name__ == '__main__':
   tf.app.run()
