@@ -26,17 +26,23 @@ def main(_):
 
     with tf.Graph().as_default():
 
+        tf.logging.info("Preparing dataset")
+
         dataset = dataset_factory.get_dataset(
             dataset_name, dataset_split_name, dataset_dir)
 
         network_fn = nets_factory.get_network_fn(
             model_name, num_classes=dataset.num_classes, is_training=False)
 
+        tf.logging.info("Initializing dataset provider")
+
         provider = slim.dataset_data_provider.DatasetDataProvider(
             dataset,
             shuffle=False,
-            common_queue_capacity=2 * FLAGS.batch_size,
-            common_queue_min=FLAGS.batch_size)
+            common_queue_capacity=32,
+            common_queue_min=1)
+
+        tf.logging.info("Initialized provider, now getting image and label")
 
         [image, label] = provider.get(['image', 'label'])
 
