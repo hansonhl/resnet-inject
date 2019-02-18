@@ -81,15 +81,25 @@ def main(_):
 
         num_batches = 1
 
-        tf.logging.info('Evaluating %s' % checkpoint_path)
+        with tf.Session() as sess:
+            sess.run(tf.global_variables_initializer())
+            sess.run(tf.local_variables_initializer())
 
-        slim.evaluation.evaluate_once(
-            master='',
-            checkpoint_path=checkpoint_path,
-            logdir=eval_dir,
-            num_evals=num_batches,
-            eval_op=list(names_to_updates.values()),
-            variables_to_restore=variables_to_restore)
+            sess.run(names_to_updates.values())
+
+            metric_values = sess.run(names_to_values.values())
+            for metric, value in zip(names_to_values.keys(), metric_values):
+                tf.logging.info('Metric %s has value: %f' % (metric, value))
+        #
+        # tf.logging.info('Evaluating %s' % checkpoint_path)
+        #
+        # slim.evaluation.evaluate_once(
+        #     master='',
+        #     checkpoint_path=checkpoint_path,
+        #     logdir=eval_dir,
+        #     num_evals=num_batches,
+        #     eval_op=list(names_to_updates.values()),
+        #     variables_to_restore=variables_to_restore)
 
 
 if __name__ == '__main__':
