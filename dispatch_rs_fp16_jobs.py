@@ -3,7 +3,7 @@
 # University of Chicago
 #####################################################################
 # This file intends to generate all testing instances for ResNet FP16 filtered image delta propagation
-# We only run per-layer bound and top1_top3 techniques for now    
+# We only run per-layer bound and top1_top3 techniques for now
 
 import psycopg2
 import numpy as np
@@ -16,7 +16,19 @@ import random
 # For the second block, we select the fourth unit: block2/unit_4/conv1-3
 # For the third block, we select the fifth unit: block3/unit_5/conv1-3
 # For the fourth block, we select the second unit: block4/unit_2/conv1-3
-layer_list = ['resnet_model/conv2d/Conv2D','resnet_model/conv2d_2/Conv2D','resnet_model/conv2d_3/Conv2D','resnet_model/conv2d_4/Conv2D','resnet_model/conv2d_20/Conv2D','resnet_model/conv2d_21/Conv2D','resnet_model/conv2d_22/Conv2D','resnet_model/conv2d_43/Conv2D','resnet_model/conv2d_44/Conv2D','resnet_model/conv2d_45/Conv2D','resnet_model/conv2d_50/Conv2D','resnet_model/conv2d_51/Conv2D','resnet_model/conv2d_52/Conv2D']
+layer_list = ['resnet_model/conv2d/Conv2D',
+              'resnet_model/conv2d_2/Conv2D',
+              'resnet_model/conv2d_3/Conv2D',
+              'resnet_model/conv2d_4/Conv2D',
+              'resnet_model/conv2d_20/Conv2D',
+              'resnet_model/conv2d_21/Conv2D',
+              'resnet_model/conv2d_22/Conv2D',
+              'resnet_model/conv2d_43/Conv2D',
+              'resnet_model/conv2d_44/Conv2D',
+              'resnet_model/conv2d_45/Conv2D',
+              'resnet_model/conv2d_50/Conv2D',
+              'resnet_model/conv2d_51/Conv2D',
+              'resnet_model/conv2d_52/Conv2D']
 
 try:
     conn = psycopg2.connect(database='neuron_inject', user='yiizy', password='21stCenszMan!', host='yanjing-compute1.cs.uchicago.edu')
@@ -46,7 +58,7 @@ for elem in results:
         target_h = result[0]
         target_w = result[1]
         target_c = result[2]
-        
+
         #for bound_type in ['LY','TP13']:
         for bound_type in ['LY','TP13']:
             exe_str = """INSERT INTO rs_new_fp16_filtered_DP (job_status, image_id, layer, bound_type, inj_h, inj_w, inj_c, golden_label, comparing_label, delta, loss, loss_diff, fc3_golden_label, fc3_comparing_label, top5_label, top5_prob) VALUES ('READY',""" + str(image_id) + """,\'""" + layer + """\',\'""" + bound_type + """\',""" + str(target_h) + """,""" + str(target_w) + """,""" + str(target_c) + """,""" + str(top1) + """,""" + str(top2) + """,NULL,NULL,NULL,NULL,NULL,NULL,NULL);"""

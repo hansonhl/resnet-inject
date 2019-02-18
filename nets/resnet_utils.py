@@ -252,10 +252,10 @@ def resnet_arg_scope(weight_decay=0.0001,
     An `arg_scope` to use for the resnet models.
   """
   batch_norm_params = {
-      'decay': batch_norm_decay,
-      'epsilon': batch_norm_epsilon,
-      'scale': batch_norm_scale,
-      'updates_collections': batch_norm_updates_collections,
+      'decay': batch_norm_decay, #0.997 by default
+      'epsilon': batch_norm_epsilon, #1e-5 by default
+      'scale': batch_norm_scale, #True by default
+      'updates_collections': batch_norm_updates_collections, #tf.GraphKeys.UPDATE_OPS
       'fused': None,  # Use fused batch norm if possible.
   }
 

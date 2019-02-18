@@ -156,14 +156,14 @@ def get_split(split_name, dataset_dir, file_pattern=None, reader=None):
           [], dtype=tf.int64, default_value=-1),
       'image/class/text': tf.FixedLenFeature(
           [], dtype=tf.string, default_value=''),
-      'image/object/bbox/xmin': tf.VarLenFeature(
-          dtype=tf.float32),
-      'image/object/bbox/ymin': tf.VarLenFeature(
-          dtype=tf.float32),
-      'image/object/bbox/xmax': tf.VarLenFeature(
-          dtype=tf.float32),
-      'image/object/bbox/ymax': tf.VarLenFeature(
-          dtype=tf.float32),
+      # 'image/object/bbox/xmin': tf.VarLenFeature(
+      #     dtype=tf.float32),
+      # 'image/object/bbox/ymin': tf.VarLenFeature(
+      #     dtype=tf.float32),
+      # 'image/object/bbox/xmax': tf.VarLenFeature(
+      #     dtype=tf.float32),
+      # 'image/object/bbox/ymax': tf.VarLenFeature(
+      #     dtype=tf.float32),
       'image/object/class/label': tf.VarLenFeature(
           dtype=tf.int64),
   }
@@ -172,8 +172,8 @@ def get_split(split_name, dataset_dir, file_pattern=None, reader=None):
       'image': slim.tfexample_decoder.Image('image/encoded', 'image/format'),
       'label': slim.tfexample_decoder.Tensor('image/class/label'),
       'label_text': slim.tfexample_decoder.Tensor('image/class/text'),
-      'object/bbox': slim.tfexample_decoder.BoundingBox(
-          ['ymin', 'xmin', 'ymax', 'xmax'], 'image/object/bbox/'),
+      # 'object/bbox': slim.tfexample_decoder.BoundingBox(
+      #     ['ymin', 'xmin', 'ymax', 'xmax'], 'image/object/bbox/'),
       'object/label': slim.tfexample_decoder.Tensor('image/object/class/label'),
   }
 
