@@ -82,12 +82,12 @@ def main(_):
         num_batches = 1
 
         with tf.Session() as sess:
-            sess.run(tf.global_variables_initializer())
-            sess.run(tf.local_variables_initializer())
+            # sess.run(tf.global_variables_initializer())
+            # sess.run(tf.local_variables_initializer())
+            tf.logging.info("getting metric values")
+            sess.run(list(names_to_updates.values()))
 
-            sess.run(names_to_updates.values())
-
-            metric_values = sess.run(names_to_values.values())
+            metric_values = sess.run(list(names_to_values.values()))
             for metric, value in zip(names_to_values.keys(), metric_values):
                 tf.logging.info('Metric %s has value: %f' % (metric, value))
         #
