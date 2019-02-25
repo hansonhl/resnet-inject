@@ -300,35 +300,34 @@ def dropout_batch_norm(inputs,
                        renorm_clipping=None,
                        renorm_decay=0.99,
                        adjustment=None):
-  with tf.variable_scope(scope, 'dropout_batch_norm'):
 
-    inner_scope = 'my_batch_norm'
-    intermediate = slim.batch_norm(
-        inputs=inputs,
-        decay=decay,
-        center=center,
-        scale=scale,
-        epsilon=epsilon,
-        activation_fn=activation_fn,
-        param_initializers=param_initializers,
-        param_regularizers=param_regularizers,
-        updates_collections=updates_collections,
-        is_training=is_training,
-        reuse=True,
-        variables_collections=variables_collections,
-        outputs_collections=outputs_collections,
-        trainable=trainable,
-        batch_weights=batch_weights,
-        fused=fused,
-        data_format=data_format,
-        zero_debias_moving_mean=zero_debias_moving_mean,
-        scope=inner_scope, #changed
-        renorm=renorm,
-        renorm_clipping=renorm_clipping,
-        renorm_decay=renorm_decay,
-        adjustment=adjustment)
+  inner_scope = 'BatchNorm'
+  intermediate = slim.batch_norm(
+    inputs=inputs,
+    decay=decay,
+    center=center,
+    scale=scale,
+    epsilon=epsilon,
+    activation_fn=activation_fn,
+    param_initializers=param_initializers,
+    param_regularizers=param_regularizers,
+    updates_collections=updates_collections,
+    is_training=is_training,
+    reuse=True,
+    variables_collections=variables_collections,
+    outputs_collections=outputs_collections,
+    trainable=trainable,
+    batch_weights=batch_weights,
+    fused=fused,
+    data_format=data_format,
+    zero_debias_moving_mean=zero_debias_moving_mean,
+    scope=inner_scope, #changed
+    renorm=renorm,
+    renorm_clipping=renorm_clipping,
+    renorm_decay=renorm_decay,
+    adjustment=adjustment)
 
-    return intermediate
+  return intermediate
 
 
 
