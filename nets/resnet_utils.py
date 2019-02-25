@@ -340,6 +340,9 @@ def batch_norm_dropout(batch_norm_scope, output, stddev_scale, outputs_collectio
     gamma = tf.get_variable('gamma')
     beta = tf.get_variable('beta')
 
+    summary_op = tf.summary.histogram('Before dropout', output, collections=[])
+    tf.add_to_collection(tf.GraphKeys.SUMMARIES, summary_op)
+
     stddev = tf.sqrt(variance)
 
     stddev_scale = tf.constant(2.)
@@ -351,6 +354,9 @@ def batch_norm_dropout(batch_norm_scope, output, stddev_scale, outputs_collectio
     dropout = tf.maximum(0., tf.sign(tf.subtract(cutoff, reduced_y)))
 
     output = tf.multiply(output, dropout)
+
+    summary_op = tf.summary.histogram('After dropout', output, collections=[])
+    tf.add_to_collection(tf.GraphKeys.SUMMARIES, summary_op)
 
     return collect_named_outputs(outputs_collections, sc.name, output)
 
