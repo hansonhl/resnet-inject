@@ -333,7 +333,7 @@ def dropout_batch_norm(inputs,
 
 
 
-def batch_norm_dropout(batch_norm_scope, output, stddev_scale, outputs_collections):
+def batch_norm_dropout(batch_norm_scope, output, stddev_scale, activation_fn, outputs_collections):
   with tf.variable_scope(batch_norm_scope, reuse=True) as sc:
     mean = tf.get_variable('moving_mean')
     variance = tf.get_variable('moving_variance')
@@ -346,7 +346,7 @@ def batch_norm_dropout(batch_norm_scope, output, stddev_scale, outputs_collectio
     summary_op = tf.summary.histogram('Before_dropout', output, collections=[])
     tf.add_to_collection(tf.GraphKeys.SUMMARIES, summary_op)
 
-    """
+
     stddev = tf.sqrt(variance)
 
     stddev_scale = tf.constant(2.)
@@ -356,16 +356,16 @@ def batch_norm_dropout(batch_norm_scope, output, stddev_scale, outputs_collectio
     dropout = tf.maximum(0., tf.sign(tf.subtract(cutoff, reduced_y)))
     output = tf.multiply(output, dropout)
 
-    mean_after_dropout = tf.mean
-
     summary_op = tf.summary.scalar('mean_before_dropout', mean, collections=[])
     tf.add_to_collection(tf.GraphKeys.SUMMARIES, summary_op)
 
     summary_op = tf.summary.histogram('After_dropout', output, collections=[])
     tf.add_to_collection(tf.GraphKeys.SUMMARIES, summary_op)
-    """
 
-    return collect_named_outputs(outputs_collections, sc.name, output)
+    if activation_fn is not None:
+        output = activation_fn(output)
+
+    return output
 
 
 
