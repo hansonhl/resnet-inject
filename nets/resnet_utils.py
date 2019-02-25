@@ -301,7 +301,7 @@ def dropout_batch_norm(inputs,
                        renorm_decay=0.99,
                        adjustment=None):
   my_scope_name = "BatchNorm"
-  intermediate = slim.batch_norm(
+  output = slim.batch_norm(
     inputs=inputs,
     decay=decay,
     center=center,
@@ -326,13 +326,30 @@ def dropout_batch_norm(inputs,
     renorm_decay=renorm_decay,
     adjustment=adjustment)
 
-  with tf.variable_scope(my_scope_name, reuse=True):
+  with tf.variable_scope(my_scope_name, reuse=True) as sc:
     mean = tf.get_variable('moving_mean')
-    print("**********Got Mean:", mean)
     variance = tf.get_variable('moving_variance')
     gamma = tf.get_variable('gamma')
     beta = tf.get_variable('beta')
-  return intermediate
+
+    stddev = tf.sqrt(variance)
+
+    cutoff = tf.add(mean, stddev)
+
+    output_shape = output.get_shape()
+    if data_format == 'NHWC':
+      param_shape = output_shape[-1:]
+    else:
+      param_shape = output_shape[1:2]
+    # Param shape is the number of channels
+
+    reduced_y = tf.divide(tf.subtract(output, beta), gamma)
+
+    dropout = tf.max(0, tf.sign(tf.subtract(cutoff, reduced_y)))
+
+    output = tf.multiply(output, dropout)
+
+    return collect_named_outputs(outputs_collections, sc.name, output)
 
 
 
@@ -369,3 +386,39 @@ def resnet_batch_dropout_arg_scope(weight_decay=0.0001,
       # slim.arg_scope([slim.max_pool2d], padding='VALID').
       with slim.arg_scope([slim.max_pool2d], padding='SAME') as arg_sc:
         return arg_sc
+
+
+def collect_named_outputs(collections, alias, outputs):
+  """Add `Tensor` outputs tagged with alias to collections.
+  It is useful to collect end-points or tags for summaries. Example of usage:
+  logits = collect_named_outputs('end_points', 'inception_v3/logits', logits)
+  assert 'inception_v3/logits' in logits.aliases
+  Args:
+    collections: A collection or list of collections. If None skip collection.
+    alias: String to append to the list of aliases of outputs, for example,
+           'inception_v3/conv1'.
+    outputs: Tensor, an output tensor to collect
+  Returns:
+    The outputs Tensor to allow inline call.
+  """
+  if collections:
+    append_tensor_alias(outputs, alias)
+    tf.add_to_collections(collections, outputs)
+  return outputs
+
+def append_tensor_alias(tensor, alias):
+  """Append an alias to the list of aliases of the tensor.
+  Args:
+    tensor: A `Tensor`.
+    alias: String, to add to the list of aliases of the tensor.
+  Returns:
+    The tensor with a new alias appended to its list of aliases.
+  """
+  # Remove ending '/' if present.
+  if alias[-1] == '/':
+    alias = alias[:-1]
+  if hasattr(tensor, 'aliases'):
+    tensor.aliases.append(alias)
+  else:
+    tensor.aliases = [alias]
+  return tensor
