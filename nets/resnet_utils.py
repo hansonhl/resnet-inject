@@ -301,7 +301,6 @@ def dropout_batch_norm(inputs,
                        renorm_decay=0.99,
                        adjustment=None):
 
-  inner_scope = 'BatchNorm'
   intermediate = slim.batch_norm(
     inputs=inputs,
     decay=decay,
@@ -321,7 +320,7 @@ def dropout_batch_norm(inputs,
     fused=fused,
     data_format=data_format,
     zero_debias_moving_mean=zero_debias_moving_mean,
-    scope=inner_scope, #changed
+    scope=scope, #changed
     renorm=renorm,
     renorm_clipping=renorm_clipping,
     renorm_decay=renorm_decay,
