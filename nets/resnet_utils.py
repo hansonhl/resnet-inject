@@ -334,18 +334,13 @@ def dropout_batch_norm(inputs,
 
     stddev = tf.sqrt(variance)
 
-    cutoff = tf.add(mean, stddev)
+    stddev_scale = tf.constant(2.)
 
-    output_shape = output.get_shape()
-    if data_format == 'NHWC':
-      param_shape = output_shape[-1:]
-    else:
-      param_shape = output_shape[1:2]
-    # Param shape is the number of channels
+    cutoff = tf.add(mean, tf.multiply(stddev, stddev_scale))
 
     reduced_y = tf.divide(tf.subtract(output, beta), gamma)
 
-    dropout = tf.maximum(0, tf.sign(tf.subtract(cutoff, reduced_y)))
+    dropout = tf.maximum(0., tf.sign(tf.subtract(cutoff, reduced_y)))
 
     output = tf.multiply(output, dropout)
 
