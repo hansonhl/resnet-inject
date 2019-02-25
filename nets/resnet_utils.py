@@ -328,7 +328,7 @@ def dropout_batch_norm(inputs,
 
   with tf.variable_scope(my_scope_name, reuse=True):
     mean = tf.get_variable('moving_mean')
-    print("**********Got Mean:", mean.eval())
+    print("**********Got Mean:", mean)
     variance = tf.get_variable('moving_variance')
     gamma = tf.get_variable('gamma')
     beta = tf.get_variable('beta')
