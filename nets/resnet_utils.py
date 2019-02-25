@@ -285,7 +285,7 @@ def dropout_batch_norm(inputs,
                        activation_fn=None, #relu
                        param_initializers=None,
                        param_regularizers=None,
-                       updates_collections=ops.GraphKeys.UPDATE_OPS,
+                       updates_collections=tf.GraphKeys.UPDATE_OPS,
                        is_training=True,
                        reuse=None,
                        variables_collections=None,
