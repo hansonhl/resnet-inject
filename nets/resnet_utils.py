@@ -345,7 +345,7 @@ def dropout_batch_norm(inputs,
 
     reduced_y = tf.divide(tf.subtract(output, beta), gamma)
 
-    dropout = tf.max(0, tf.sign(tf.subtract(cutoff, reduced_y)))
+    dropout = tf.maximum(0, tf.sign(tf.subtract(cutoff, reduced_y)))
 
     output = tf.multiply(output, dropout)
 
