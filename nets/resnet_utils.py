@@ -352,9 +352,6 @@ def batch_norm_dropout(batch_norm_scope, output, stddev_scale):
 
     output = tf.multiply(output, dropout)
 
-    with tf.Session() as sess:
-        print("output", output.eval())
-
     return collect_named_outputs(outputs_collections, sc.name, output)
 
 
