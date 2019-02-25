@@ -340,16 +340,13 @@ def batch_norm_dropout(batch_norm_scope, output, stddev_scale, activation_fn, ou
     gamma = tf.get_variable('gamma')
     beta = tf.get_variable('beta')
 
-    summary_op = tf.summary.scalar('Mean_before_dropout', mean, collections=[])
-    tf.add_to_collection(tf.GraphKeys.SUMMARIES, summary_op)
 
     summary_op = tf.summary.histogram('Before_dropout', output, collections=[])
     tf.add_to_collection(tf.GraphKeys.SUMMARIES, summary_op)
 
-
     stddev = tf.sqrt(variance)
 
-    stddev_scale = tf.constant(2.)
+    stddev_scale = tf.constant(3.)
 
     cutoff = tf.add(mean, tf.multiply(stddev, stddev_scale))
     reduced_y = tf.divide(tf.subtract(output, beta), gamma)
