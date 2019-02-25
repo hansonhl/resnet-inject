@@ -1,0 +1,21 @@
+surge.sh
+
+Jeremiah
+
+affinity propogation -- no need of embedding, similarity metric is enough
+similarity-only clustering methods
+
+how to calculate similarity metric
+
+1. Error resilience property of BN
+  - Get fp16 VGG network
+  - Network A: with BN, Network B: without BN
+  - Run a subset of images that the same results in networks and A and B
+    Find such a subset
+
+2. Drop based on distribution of weights
+  - Drop out anything > (mean + 1*sigma) or (mean + 2*sigma)
+    Do that on every layer of a healthy network if network has that
+
+  - correctness not affected
+  - Drop or clip? Drop.
