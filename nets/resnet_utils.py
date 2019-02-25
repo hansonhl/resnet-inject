@@ -293,7 +293,7 @@ def dropout_batch_norm(inputs,
                        trainable=True,
                        batch_weights=None,
                        fused=None,
-                       data_format=DATA_FORMAT_NHWC,
+                       data_format='NHWC',
                        zero_debias_moving_mean=False,
                        scope=None, #preact
                        renorm=False,
