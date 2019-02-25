@@ -301,7 +301,7 @@ def dropout_batch_norm(inputs,
                        renorm_decay=0.99,
                        adjustment=None):
   if scope is not None:
-      my_scope_name = "BatchNorm" + scope
+      my_scope_name = scope
   else:
       my_scope_name = "BatchNorm"
 
