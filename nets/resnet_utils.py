@@ -328,12 +328,12 @@ def dropout_batch_norm(inputs,
     renorm_decay=renorm_decay,
     adjustment=adjustment)
 
-  return batch_norm_dropout(my_scope_name, output, 2.)
+  return batch_norm_dropout(my_scope_name, output, 2., outputs_collections)
 
 
 
 
-def batch_norm_dropout(batch_norm_scope, output, stddev_scale):
+def batch_norm_dropout(batch_norm_scope, output, stddev_scale, outputs_collections):
   with tf.variable_scope(batch_norm_scope, reuse=True) as sc:
     mean = tf.get_variable('moving_mean')
     variance = tf.get_variable('moving_variance')

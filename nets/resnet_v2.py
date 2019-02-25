@@ -89,7 +89,7 @@ def bottleneck(inputs, depth, depth_bottleneck, stride, rate=1,
     # preact = resnet_utils.dropout_batch_norm(inputs, activation_fn=tf.nn.relu, scope='preact')
     preact = slim.batch_norm(inputs, activation_fn=tf.nn.relu, scope='preact')
 
-    preact = resnet_utils.batch_norm_dropout('preact', preact, 2.)
+    preact = resnet_utils.batch_norm_dropout('preact', preact, 2., None)
 
     # Preform dropout here
     if depth == depth_in:
