@@ -353,9 +353,6 @@ def batch_norm_dropout(batch_norm_scope, output, stddev_scale, activation_fn, ou
     dropout = tf.maximum(0., tf.sign(tf.subtract(cutoff, reduced_y)))
     output = tf.multiply(output, dropout)
 
-    summary_op = tf.summary.scalar('mean_before_dropout', mean, collections=[])
-    tf.add_to_collection(tf.GraphKeys.SUMMARIES, summary_op)
-
     summary_op = tf.summary.histogram('After_dropout', output, collections=[])
     tf.add_to_collection(tf.GraphKeys.SUMMARIES, summary_op)
 
