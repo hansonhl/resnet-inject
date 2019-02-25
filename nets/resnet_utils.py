@@ -295,12 +295,16 @@ def dropout_batch_norm(inputs,
                        fused=None,
                        data_format='NHWC',
                        zero_debias_moving_mean=False,
-                       scope=None, #preact
+                       scope=None,
                        renorm=False,
                        renorm_clipping=None,
                        renorm_decay=0.99,
                        adjustment=None):
-  my_scope_name = "BatchNorm"
+  if scope is not none:
+      my_scope_name = "BatchNorm" + scope
+  else:
+      my_scope_name = "BatchNorm"
+
   output = slim.batch_norm(
     inputs=inputs,
     decay=decay,
