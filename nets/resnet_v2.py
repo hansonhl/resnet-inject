@@ -56,6 +56,7 @@ from nets import resnet_utils
 
 slim = tf.contrib.slim
 resnet_arg_scope = resnet_utils.resnet_arg_scope
+resnet_batch_dropout_arg_scope = resnet_utils.resnet_batch_dropout_arg_scope
 
 
 @slim.add_arg_scope
