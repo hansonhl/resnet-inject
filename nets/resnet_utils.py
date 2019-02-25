@@ -300,10 +300,8 @@ def dropout_batch_norm(inputs,
                        renorm_clipping=None,
                        renorm_decay=0.99,
                        adjustment=None):
-  if scope is not None:
-      my_scope_name = scope
-  else:
-      my_scope_name = "BatchNorm"
+
+  my_scope_name = "BatchNorm"
 
   output = slim.batch_norm(
     inputs=inputs,
@@ -330,7 +328,13 @@ def dropout_batch_norm(inputs,
     renorm_decay=renorm_decay,
     adjustment=adjustment)
 
-  with tf.variable_scope(my_scope_name, reuse=True) as sc:
+  return batch_norm_dropout(my_scope_name, output, 2.)
+
+
+
+
+def batch_norm_dropout(batch_norm_scope, output, stddev_scale):
+  with tf.variable_scope(batch_norm_scope, reuse=True) as sc:
     mean = tf.get_variable('moving_mean')
     variance = tf.get_variable('moving_variance')
     gamma = tf.get_variable('gamma')
@@ -352,8 +356,6 @@ def dropout_batch_norm(inputs,
         print("output", output.eval())
 
     return collect_named_outputs(outputs_collections, sc.name, output)
-
-
 
 
 

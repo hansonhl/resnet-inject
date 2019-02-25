@@ -86,8 +86,11 @@ def bottleneck(inputs, depth, depth_bottleneck, stride, rate=1,
   """
   with tf.variable_scope(scope, 'bottleneck_v2', [inputs]) as sc:
     depth_in = slim.utils.last_dimension(inputs.get_shape(), min_rank=4)
-    preact = resnet_utils.dropout_batch_norm(inputs, activation_fn=tf.nn.relu, scope='preact')
-    # preact = slim.batch_norm(inputs, activation_fn=tf.nn.relu, scope='preact')
+    # preact = resnet_utils.dropout_batch_norm(inputs, activation_fn=tf.nn.relu, scope='preact')
+    preact = slim.batch_norm(inputs, activation_fn=tf.nn.relu, scope='preact')
+
+    preact = batch_norm_dropout('preact', preact, 2.)
+    
     # Preform dropout here
     if depth == depth_in:
       shortcut = resnet_utils.subsample(inputs, stride, 'shortcut')
