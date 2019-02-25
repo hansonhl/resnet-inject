@@ -275,3 +275,93 @@ def resnet_arg_scope(weight_decay=0.0001,
       # slim.arg_scope([slim.max_pool2d], padding='VALID').
       with slim.arg_scope([slim.max_pool2d], padding='SAME') as arg_sc:
         return arg_sc
+
+
+def dropout_batch_norm(inputs,
+                       decay=0.999, #0.997
+                       center=True,
+                       scale=False, #true
+                       epsilon=0.001, #1e-5
+                       activation_fn=None, #relu
+                       param_initializers=None,
+                       param_regularizers=None,
+                       updates_collections=ops.GraphKeys.UPDATE_OPS,
+                       is_training=True,
+                       reuse=None,
+                       variables_collections=None,
+                       outputs_collections=None,
+                       trainable=True,
+                       batch_weights=None,
+                       fused=None,
+                       data_format=DATA_FORMAT_NHWC,
+                       zero_debias_moving_mean=False,
+                       scope=None, #preact
+                       renorm=False,
+                       renorm_clipping=None,
+                       renorm_decay=0.99,
+                       adjustment=None):
+  with tf.variable_scope(scope, 'dropout_batch_norm'):
+
+    inner_scope = 'my_batch_norm'
+    intermediate = slim.batch_norm(
+        inputs=inputs,
+        decay=decay,
+        center=center,
+        scale=scale,
+        epsilon=epsilon,
+        activation_fn=activation_fn,
+        param_initializers=param_initializers,
+        param_regularizers=param_regularizers,
+        updates_collections=updates_collections,
+        is_training=is_training,
+        reuse=True,
+        variables_collections=variables_collections,
+        outputs_collections=outputs_collections,
+        trainable=trainable,
+        batch_weights=batch_weights,
+        fused=fused,
+        data_format=data_format,
+        zero_debias_moving_mean=zero_debias_moving_mean,
+        scope=inner_scope, #changed
+        renorm=renorm,
+        renorm_clipping=renorm_clipping,
+        renorm_decay=renorm_decay,
+        adjustment=adjustment)
+
+    return intermediate
+
+
+
+
+
+def resnet_batch_dropout_arg_scope(weight_decay=0.0001,
+                                   batch_norm_decay=0.997,
+                                   batch_norm_epsilon=1e-5,
+                                   batch_norm_scale=True,
+                                   activation_fn=tf.nn.relu,
+                                   use_batch_norm=True,
+                                   batch_norm_updates_collections=tf.GraphKeys.UPDATE_OPS):
+  batch_norm_params = {
+      'decay': batch_norm_decay, #0.997 by default
+      'epsilon': batch_norm_epsilon, #1e-5 by default
+      'scale': batch_norm_scale, #True by default
+      'updates_collections': batch_norm_updates_collections, #tf.GraphKeys.UPDATE_OPS
+      'fused': None,  # Use fused batch norm if possible.
+  }
+
+  with slim.arg_scope(
+      [slim.conv2d],
+      weights_regularizer=slim.l2_regularizer(weight_decay),
+      weights_initializer=slim.variance_scaling_initializer(),
+      activation_fn=activation_fn,
+      normalizer_fn=dropout_batch_norm if use_batch_norm else None,
+      normalizer_params=batch_norm_params):
+    with slim.arg_scope([slim.batch_norm], **batch_norm_params):
+      # The following implies padding='SAME' for pool1, which makes feature
+      # alignment easier for dense prediction tasks. This is also used in
+      # https://github.com/facebook/fb.resnet.torch. However the accompanying
+      # code of 'Deep Residual Learning for Image Recognition' uses
+      # padding='VALID' for pool1. You can switch to that choice by setting
+      # slim.arg_scope([slim.max_pool2d], padding='VALID').
+      with slim.arg_scope([slim.max_pool2d], padding='SAME') as arg_sc:
+        return arg_sc
