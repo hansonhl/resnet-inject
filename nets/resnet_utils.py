@@ -300,7 +300,7 @@ def dropout_batch_norm(inputs,
                        renorm_clipping=None,
                        renorm_decay=0.99,
                        adjustment=None):
-
+  my_scope_name = "BatchNorm"
   intermediate = slim.batch_norm(
     inputs=inputs,
     decay=decay,
@@ -320,12 +320,18 @@ def dropout_batch_norm(inputs,
     fused=fused,
     data_format=data_format,
     zero_debias_moving_mean=zero_debias_moving_mean,
-    scope="BatchNorm", #changed
+    scope=my_scope_name, #changed
     renorm=renorm,
     renorm_clipping=renorm_clipping,
     renorm_decay=renorm_decay,
     adjustment=adjustment)
 
+  with tf.variable_scope(my_scope_name, reuse=True):
+    mean = tf.get_variable('moving_mean')
+    print("**********Got Mean:", mean.eval())
+    variance = tf.get_variable('moving_variance')
+    gamma = tf.get_variable('gamma')
+    beta = tf.get_variable('beta')
   return intermediate
 
 
