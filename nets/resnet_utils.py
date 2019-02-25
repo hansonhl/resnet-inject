@@ -320,7 +320,7 @@ def dropout_batch_norm(inputs,
     fused=fused,
     data_format=data_format,
     zero_debias_moving_mean=zero_debias_moving_mean,
-    scope=scope, #changed
+    scope="BatchNorm", #changed
     renorm=renorm,
     renorm_clipping=renorm_clipping,
     renorm_decay=renorm_decay,
