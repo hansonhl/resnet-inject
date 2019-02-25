@@ -19,7 +19,7 @@ from preprocessing import preprocessing_factory
 dataset_dir = '/local/hanson/imagenet'
 dataset_name = 'imagenet'
 dataset_split_name = 'validation'
-model_name = 'resnet_v2_50_batch_dropout'
+model_name = 'resnet_v2_50' #'resnet_v2_50_batch_dropout'
 preprocessing_name = 'inception'
 eval_image_size = 299
 checkpoint_path = 'checkpoints/resnet_v2_50.ckpt'
