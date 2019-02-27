@@ -346,6 +346,10 @@ def add_hist_summary(name, val):
     summary_op = tf.summary.histogram(name, val, collections=[])
     tf.add_to_collection(tf.GraphKeys.SUMMARIES, summary_op)
 
+def add_scal_summary(name, val):
+    summary_op = tf.summary.scalar(name, val, collections=[])
+    tf.add_to_collection(tf.GraphKeys.SUMMARIES, summary_op)
+
 def my_variance(v, axes):
   mean = tf.reduce_mean(v, axes)
   var = tf.reduce_mean(tf.square(tf.subtract(v, mean)), axes)
@@ -371,8 +375,8 @@ def batch_norm_dropout(batch_norm_scope, output, scale, activation_fn, outputs_c
     cutoff = tf.add(mean, tf.multiply(stddev, stddev_scale))
     reduced_y = tf.divide(tf.subtract(output, beta), gamma)
     dropout = tf.maximum(0., tf.sign(tf.subtract(cutoff, reduced_y)))
-    dropped_count = tf.size(dropout) - tf.count_nonzero(dropout)
-    add_hist_summary('Nonzero count', dropped_count)
+    dropped_count = tf.subtract(tf.size(dropout), tf.count_nonzero(dropout, dtype=tf.int32))
+    add_scal_summary('Nonzero_count', dropped_count)
     output = tf.multiply(output, dropout)
 
     # summary_op = tf.summary.histogram('After_dropout', output, collections=[])
