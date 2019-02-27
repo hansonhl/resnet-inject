@@ -360,8 +360,10 @@ def batch_norm_dropout(batch_norm_scope, output, scale, activation_fn, outputs_c
     gamma = tf.get_variable('gamma')
     beta = tf.get_variable('beta')
 
-    add_hist_summary('Mean_before_dropout', mean)
-    add_hist_summary('Var_before_dropout', variance)
+    axes = [0,1,2]
+
+    add_hist_summary('Mean_before_dropout', tf.reduce_mean(output, axes))
+    add_hist_summary('Var_before_dropout', my_variance(output, axes))
 
     stddev = tf.sqrt(variance)
 
@@ -374,7 +376,7 @@ def batch_norm_dropout(batch_norm_scope, output, scale, activation_fn, outputs_c
 
     # summary_op = tf.summary.histogram('After_dropout', output, collections=[])
     # tf.add_to_collection(tf.GraphKeys.SUMMARIES, summary_op)
-    axes = [0,1,2]
+
 
     add_hist_summary('Mean_after_dropout', tf.reduce_mean(output, axes))
     add_hist_summary('Var_after_dropout', my_variance(output, axes))
