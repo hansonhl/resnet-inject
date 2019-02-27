@@ -346,6 +346,11 @@ def add_hist_summary(name, val):
     summary_op = tf.summary.histogram(name, val, collections=[])
     tf.add_to_collection(tf.GraphKeys.SUMMARIES, summary_op)
 
+def my_variance(v, axes):
+  mean = tf.reduce_mean(v, axes)
+  var = tf.reduce_mean(tf.square(tf.subtract(v, mean)), axes)
+
+
 
 def batch_norm_dropout(batch_norm_scope, output, scale, activation_fn, outputs_collections):
   with tf.variable_scope(batch_norm_scope, reuse=True) as sc:
@@ -368,9 +373,10 @@ def batch_norm_dropout(batch_norm_scope, output, scale, activation_fn, outputs_c
 
     # summary_op = tf.summary.histogram('After_dropout', output, collections=[])
     # tf.add_to_collection(tf.GraphKeys.SUMMARIES, summary_op)
+    axes = [0,1,2]
 
-    add_hist_summary('Mean_after_dropout', tf.math.reduce_mean(output, 3))
-    add_hist_summary('Var_after_dropout', tf.math.reduce_variance(output, 3))
+    add_hist_summary('Mean_after_dropout', tf.reduce_mean(output, axes))
+    add_hist_summary('Var_after_dropout', my_variance(output, axes))
 
     if activation_fn is not None:
         output = activation_fn(output)
