@@ -376,7 +376,7 @@ def batch_norm_dropout(batch_norm_scope, output, scale, activation_fn, outputs_c
     reduced_y = tf.divide(tf.subtract(output, beta), gamma)
     dropout = tf.maximum(0., tf.sign(tf.subtract(cutoff, reduced_y)))
     dropped_count = tf.subtract(tf.size(dropout), tf.count_nonzero(dropout, dtype=tf.int32))
-    add_scal_summary('Nonzero_count', dropped_count)
+    add_scal_summary('Dropped_count', dropped_count)
     output = tf.multiply(output, dropout)
 
     # summary_op = tf.summary.histogram('After_dropout', output, collections=[])
