@@ -331,30 +331,46 @@ def dropout_batch_norm(inputs,
   return batch_norm_dropout(my_scope_name, output, 2., outputs_collections)
 
 
+# def batch_norm_clipped(batch_norm_scope, output, scale, activation_fn, outputs_collections):
+#   with tf.variable_scope(batch_norm_scope, reuse=True) as sc:
+#     mean = tf.get_variable('moving_mean')
+#     variance = tf.get_variable('moving_variance')
+#     gamma = tf.get_variable('gamma')
+#     beta = tf.get_variable('beta')
+#     stddev = tf.sqrt(variance)
+#     stddev_scale = tf.constant(scale)
+#     cutoff = tf.add(mean, tf.multiply(stddev, stddev_scale))
 
 
-def batch_norm_dropout(batch_norm_scope, output, stddev_scale, activation_fn, outputs_collections):
+def add_hist_summary(name, val):
+    summary_op = tf.summary.histogram(name, val, collections=[])
+    tf.add_to_collection(tf.GraphKeys.SUMMARIES, summary_op)
+
+
+def batch_norm_dropout(batch_norm_scope, output, scale, activation_fn, outputs_collections):
   with tf.variable_scope(batch_norm_scope, reuse=True) as sc:
     mean = tf.get_variable('moving_mean')
     variance = tf.get_variable('moving_variance')
     gamma = tf.get_variable('gamma')
     beta = tf.get_variable('beta')
 
-
-    summary_op = tf.summary.histogram('Before_dropout', output, collections=[])
-    tf.add_to_collection(tf.GraphKeys.SUMMARIES, summary_op)
+    add_hist_summary('Mean_before_dropout', mean)
+    add_hist_summary('Var_before_dropout', variance)
 
     stddev = tf.sqrt(variance)
 
-    stddev_scale = tf.constant(3.)
+    stddev_scale = tf.constant(scale))
 
     cutoff = tf.add(mean, tf.multiply(stddev, stddev_scale))
     reduced_y = tf.divide(tf.subtract(output, beta), gamma)
     dropout = tf.maximum(0., tf.sign(tf.subtract(cutoff, reduced_y)))
     output = tf.multiply(output, dropout)
 
-    summary_op = tf.summary.histogram('After_dropout', output, collections=[])
-    tf.add_to_collection(tf.GraphKeys.SUMMARIES, summary_op)
+    # summary_op = tf.summary.histogram('After_dropout', output, collections=[])
+    # tf.add_to_collection(tf.GraphKeys.SUMMARIES, summary_op)
+
+    add_hist_summary('Mean_after_dropout', tf.reduce_mean(output, 3))
+    add_hist_summary('Var_after_dropout', tf.reduce_variance(output, 3))
 
     if activation_fn is not None:
         output = activation_fn(output)

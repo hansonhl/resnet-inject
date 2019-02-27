@@ -17,5 +17,16 @@ how to calculate similarity metric
   - Drop out anything > (mean + 1*sigma) or (mean + 2*sigma)
     Do that on every layer of a healthy network if network has that
 
+    Currently does not work well on healthy network with pre-trained weights
+
+    Next step: print out mean and stddev of original y and dropped-out y.
+      => Need to scale up dropped-out y to original stddev and mean?
+         (probably relevant in training)
+
+    => Need to retrain?
+    => Use clipping instead of dropping?
+
+  - Also need to implement on fp16.
+
   - correctness not affected
   - Drop or clip? Drop.
