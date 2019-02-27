@@ -359,7 +359,7 @@ def batch_norm_dropout(batch_norm_scope, output, scale, activation_fn, outputs_c
 
     stddev = tf.sqrt(variance)
 
-    stddev_scale = tf.constant(scale))
+    stddev_scale = tf.constant(scale)
 
     cutoff = tf.add(mean, tf.multiply(stddev, stddev_scale))
     reduced_y = tf.divide(tf.subtract(output, beta), gamma)
@@ -369,8 +369,8 @@ def batch_norm_dropout(batch_norm_scope, output, scale, activation_fn, outputs_c
     # summary_op = tf.summary.histogram('After_dropout', output, collections=[])
     # tf.add_to_collection(tf.GraphKeys.SUMMARIES, summary_op)
 
-    add_hist_summary('Mean_after_dropout', tf.reduce_mean(output, 3))
-    add_hist_summary('Var_after_dropout', tf.reduce_variance(output, 3))
+    add_hist_summary('Mean_after_dropout', tf.math.reduce_mean(output, 3))
+    add_hist_summary('Var_after_dropout', tf.math.reduce_variance(output, 3))
 
     if activation_fn is not None:
         output = activation_fn(output)
