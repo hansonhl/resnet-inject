@@ -349,6 +349,7 @@ def add_hist_summary(name, val):
 def my_variance(v, axes):
   mean = tf.reduce_mean(v, axes)
   var = tf.reduce_mean(tf.square(tf.subtract(v, mean)), axes)
+  return var
 
 
 
