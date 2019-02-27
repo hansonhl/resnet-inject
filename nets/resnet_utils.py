@@ -331,15 +331,15 @@ def dropout_batch_norm(inputs,
   return batch_norm_dropout(my_scope_name, output, 2., outputs_collections)
 
 
-# def batch_norm_clipped(batch_norm_scope, output, scale, activation_fn, outputs_collections):
-#   with tf.variable_scope(batch_norm_scope, reuse=True) as sc:
-#     mean = tf.get_variable('moving_mean')
-#     variance = tf.get_variable('moving_variance')
-#     gamma = tf.get_variable('gamma')
-#     beta = tf.get_variable('beta')
-#     stddev = tf.sqrt(variance)
-#     stddev_scale = tf.constant(scale)
-#     cutoff = tf.add(mean, tf.multiply(stddev, stddev_scale))
+def batch_norm_clipped(batch_norm_scope, output, scale, activation_fn, outputs_collections):
+  with tf.variable_scope(batch_norm_scope, reuse=True) as sc:
+    mean = tf.get_variable('moving_mean')
+    variance = tf.get_variable('moving_variance')
+    gamma = tf.get_variable('gamma')
+    beta = tf.get_variable('beta')
+    stddev = tf.sqrt(variance)
+    stddev_scale = tf.constant(scale)
+    cutoff = tf.add(mean, tf.multiply(stddev, stddev_scale))
 
 
 def add_hist_summary(name, val):
@@ -350,7 +350,6 @@ def my_variance(v, axes):
   mean = tf.reduce_mean(v, axes)
   var = tf.reduce_mean(tf.square(tf.subtract(v, mean)), axes)
   return var
-
 
 
 def batch_norm_dropout(batch_norm_scope, output, scale, activation_fn, outputs_collections):
@@ -372,6 +371,8 @@ def batch_norm_dropout(batch_norm_scope, output, scale, activation_fn, outputs_c
     cutoff = tf.add(mean, tf.multiply(stddev, stddev_scale))
     reduced_y = tf.divide(tf.subtract(output, beta), gamma)
     dropout = tf.maximum(0., tf.sign(tf.subtract(cutoff, reduced_y)))
+    dropped_count = tf.size(dropout) - tf.count_nonzero(dropout)
+    add_hist_summary('Nonzero count', dropped_count)
     output = tf.multiply(output, dropout)
 
     # summary_op = tf.summary.histogram('After_dropout', output, collections=[])
